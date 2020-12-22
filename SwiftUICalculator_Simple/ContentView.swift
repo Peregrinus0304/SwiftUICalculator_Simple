@@ -22,7 +22,7 @@ enum calculatorButtons: String {
             case .equals, .plus, .minus, .division, .multiply:
                 return Color.yellow
             default:
-            return Color.white
+                return Color.white
         }
     }
     var title: String {
@@ -55,9 +55,11 @@ enum calculatorButtons: String {
 class Environment: ObservableObject {
     
     @Published var display = ""
-     var mathsign:Bool = false
+    var mathsign:Bool = false
     var firstDigit:Int = 0
     var secondDigit:Int = 0
+    var mathOperator = ""
+  
     func receiveInput(inputButton: calculatorButtons) {
         
         self.display = inputButton.title + self.display
@@ -69,25 +71,34 @@ class Environment: ObservableObject {
                 if mathsign {
                     display = ""
                 }
-            receiveInput(inputButton: inputButton)
+                receiveInput(inputButton: inputButton)
             
             case .plus, .minus, .division, .multiply:
-            mathsign = true
-            firstDigit = Int(self.display) ?? 0
+                mathsign = true
+                mathOperator = inputButton.title
+                firstDigit = Int(self.display) ?? 0
             
             case .equals:
-            secondDigit = Int(self.display) ?? 0
-            display = String(firstDigit + secondDigit)
-            
+                secondDigit = Int(self.display) ?? 0
+                //result = firstDigit mathOperator secondDigit
+                switch mathOperator {
+                    case "÷":
+                    display = String(firstDigit / secondDigit)
+                    case "x":
+                    display = String(firstDigit * secondDigit)
+                    case "-":
+                    display = String(firstDigit - secondDigit)
+                    case "+":
+                    display = String(firstDigit + secondDigit)
+                    default:
+                    break
+            }
+                
             default:
-            break
+                break
         }
-
     }
-    
-    
 }
-
 
 struct ContentView: View {
     
@@ -103,12 +114,11 @@ struct ContentView: View {
     func buttonWidth(button: calculatorButtons) -> CGFloat {
         switch button  {
             case .zero:
-            return (UIScreen.main.bounds.width - 5 * 12) / 2
+                return (UIScreen.main.bounds.width - 5 * 12) / 2
             default:
-           return (UIScreen.main.bounds.width - 5 * 12) / 4
+                return (UIScreen.main.bounds.width - 5 * 12) / 4
         }
     }
-    
     
     var body: some View {
         
@@ -119,7 +129,6 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Text(environment.display).font(.system(size: 50)).foregroundColor(.blue).background(Color.white).cornerRadius(15)
-                    
                 }.padding()
                 
                 ForEach(buttons, id: \.self) { row in
@@ -128,15 +137,11 @@ struct ContentView: View {
                         ForEach(row, id:\.self) { button in
                             
                             Button(action: {
-                                
-                                
                                 //self.environment.receiveInput(inputButton: button)
                                 self.environment.performOperation(inputButton: button)
                             }) {
                                 Text(button.title).font(.largeTitle).frame(width: self.buttonWidth(button: button), height: (UIScreen.main.bounds.width - 5 * 12) / 4, alignment: .center)
-                                .foregroundColor(.blue).background(button.backgroundColor).cornerRadius(self.buttonWidth(button: button))                            }
-                            
-                            
+                                    .foregroundColor(.blue).background(button.backgroundColor).cornerRadius(self.buttonWidth(button: button))                            }
                         }
                     }
                 }
