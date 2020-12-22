@@ -27,8 +27,7 @@ enum calculatorButtons: String {
     }
     var title: String {
         switch self {
-            case .zero:
-            return "0"
+            case .zero: return "0"
             case .one: return "1"
             case .two: return "2"
             case .three: return "3"
@@ -53,8 +52,46 @@ enum calculatorButtons: String {
 }
 
 
+class Environment: ObservableObject {
+    
+    @Published var display = ""
+     var mathsign:Bool = false
+    var firstDigit:Int = 0
+    var secondDigit:Int = 0
+    func receiveInput(inputButton: calculatorButtons) {
+        
+        self.display = inputButton.title + self.display
+    }
+    
+    func performOperation(inputButton: calculatorButtons) {
+        switch inputButton {
+            case .zero, .one, .two, .three, .four, .five, .six, .seven, .eight, .nine:
+                if mathsign {
+                    display = ""
+                }
+            receiveInput(inputButton: inputButton)
+            
+            case .plus, .minus, .division, .multiply:
+            mathsign = true
+            firstDigit = Int(self.display) ?? 0
+            
+            case .equals:
+            secondDigit = Int(self.display) ?? 0
+            display = String(firstDigit + secondDigit)
+            
+            default:
+            break
+        }
+
+    }
+    
+    
+}
+
 
 struct ContentView: View {
+    
+    @EnvironmentObject var environment:Environment
     
     let buttons:[[calculatorButtons]] =
         [[.ac,.plusMinus,.percent, .division],
@@ -81,7 +118,7 @@ struct ContentView: View {
             VStack(spacing: 12) {
                 HStack {
                     Spacer()
-                    Text("output").font(.system(size: 50)).foregroundColor(.blue).background(Color.white).cornerRadius(15)
+                    Text(environment.display).font(.system(size: 50)).foregroundColor(.blue).background(Color.white).cornerRadius(15)
                     
                 }.padding()
                 
@@ -92,6 +129,9 @@ struct ContentView: View {
                             
                             Button(action: {
                                 
+                                
+                                //self.environment.receiveInput(inputButton: button)
+                                self.environment.performOperation(inputButton: button)
                             }) {
                                 Text(button.title).font(.largeTitle).frame(width: self.buttonWidth(button: button), height: (UIScreen.main.bounds.width - 5 * 12) / 4, alignment: .center)
                                 .foregroundColor(.blue).background(button.backgroundColor).cornerRadius(self.buttonWidth(button: button))                            }
@@ -107,6 +147,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(Environment())
     }
 }
