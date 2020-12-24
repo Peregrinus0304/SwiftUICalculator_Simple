@@ -18,11 +18,11 @@ enum calculatorButtons: String {
     var backgroundColor:Color {
         switch self {
             case .ac, .plusMinus, .percent:
-                return Color.purple
+                return Color("topButtonsBackgroundColor")
             case .equals, .plus, .minus, .division, .multiply:
-                return Color.yellow
+                return Color("rightButtonsBackgroundColor")
             default:
-                return Color.white
+                return Color("butonBackgroundColor")
         }
     }
     var title: String {
@@ -123,12 +123,12 @@ struct ContentView: View {
     var body: some View {
         
         ZStack (alignment: .bottom) {
-            Color.blue.edgesIgnoringSafeArea(.all)
+            Color("backgroundColor").edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 12) {
                 HStack {
                     Spacer()
-                    Text(environment.display).font(.system(size: 50)).foregroundColor(.blue).background(Color.white).cornerRadius(15)
+                    Text(environment.display).font(.system(size: 80)).foregroundColor(Color("textColor")).cornerRadius(15)
                 }.padding()
                 
                 ForEach(buttons, id: \.self) { row in
@@ -141,7 +141,7 @@ struct ContentView: View {
                                 self.environment.performOperation(inputButton: button)
                             }) {
                                 Text(button.title).font(.largeTitle).frame(width: self.buttonWidth(button: button), height: (UIScreen.main.bounds.width - 5 * 12) / 4, alignment: .center)
-                                    .foregroundColor(.blue).background(button.backgroundColor).cornerRadius(self.buttonWidth(button: button))                            }
+                                    .foregroundColor(Color("buttonsTextColor")).background(button.backgroundColor).cornerRadius(self.buttonWidth(button: button))                            }
                         }
                     }
                 }
