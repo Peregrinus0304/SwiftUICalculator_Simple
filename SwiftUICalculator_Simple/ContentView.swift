@@ -56,8 +56,8 @@ class Environment: ObservableObject {
     
     @Published var display = ""
     var mathsign:Bool = false
-    var firstDigit:Int = 0
-    var secondDigit:Int = 0
+    var firstDigit:Double = 0
+    var secondDigit:Double = 0
     var mathOperator = ""
     
     func receiveInput(inputButton: calculatorButtons) {
@@ -68,15 +68,27 @@ class Environment: ObservableObject {
     func performOperation(inputButton: calculatorButtons) {
         switch inputButton {
             case .zero, .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .decimal:
-                if mathsign {
-                    display = ""
-                }
+               if mathsign {
+                display = ""
+                mathsign = false
+               }
                 receiveInput(inputButton: inputButton)
             
             case .plus, .minus, .division, .multiply:
                 mathsign = true
                 mathOperator = inputButton.title
-                firstDigit = Int(self.display) ?? 0
+                firstDigit = Double(self.display) ?? 0
+            
+            case .percent:
+                mathsign = true
+                firstDigit = Double(self.display) ?? 0
+                secondDigit = 100
+                display = String(firstDigit / secondDigit)
+            
+            case .plusMinus:
+           
+            firstDigit = Double(self.display) ?? 0
+            display = String(-firstDigit)
             
             case .ac:
             firstDigit = 0
@@ -85,7 +97,7 @@ class Environment: ObservableObject {
             
             
             case .equals:
-                secondDigit = Int(self.display) ?? 0
+                secondDigit = Double(self.display) ?? 0
                 
                 switch mathOperator {
                     case "÷":
