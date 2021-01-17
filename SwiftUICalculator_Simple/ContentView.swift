@@ -59,7 +59,7 @@ class Environment: ObservableObject {
     var firstDigit:Int = 0
     var secondDigit:Int = 0
     var mathOperator = ""
-  
+    
     func receiveInput(inputButton: calculatorButtons) {
         
         self.display = inputButton.title + self.display
@@ -80,20 +80,24 @@ class Environment: ObservableObject {
             
             case .equals:
                 secondDigit = Int(self.display) ?? 0
-                //result = firstDigit mathOperator secondDigit
+                
                 switch mathOperator {
                     case "÷":
-                    display = String(firstDigit / secondDigit)
+                        if secondDigit != 0 {
+                        display = String(firstDigit / secondDigit)
+                        } else {
+                            display = "Error"
+                    }
                     case "x":
-                    display = String(firstDigit * secondDigit)
+                        display = String(firstDigit * secondDigit)
                     case "-":
-                    display = String(firstDigit - secondDigit)
+                        display = String(firstDigit - secondDigit)
                     case "+":
-                    display = String(firstDigit + secondDigit)
+                        display = String(firstDigit + secondDigit)
                     default:
-                    break
+                        break
             }
-                
+            
             default:
                 break
         }
