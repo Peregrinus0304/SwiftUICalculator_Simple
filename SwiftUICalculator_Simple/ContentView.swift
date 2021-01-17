@@ -62,12 +62,12 @@ class Environment: ObservableObject {
     
     func receiveInput(inputButton: calculatorButtons) {
         
-        self.display = inputButton.title + self.display
+        self.display = self.display + inputButton.title
     }
     
     func performOperation(inputButton: calculatorButtons) {
         switch inputButton {
-            case .zero, .one, .two, .three, .four, .five, .six, .seven, .eight, .nine:
+            case .zero, .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .decimal:
                 if mathsign {
                     display = ""
                 }
@@ -77,6 +77,12 @@ class Environment: ObservableObject {
                 mathsign = true
                 mathOperator = inputButton.title
                 firstDigit = Int(self.display) ?? 0
+            
+            case .ac:
+            firstDigit = 0
+            secondDigit = 0
+            display = ""
+            
             
             case .equals:
                 secondDigit = Int(self.display) ?? 0
